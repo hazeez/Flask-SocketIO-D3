@@ -25,6 +25,10 @@
                 // when the server sends a response, make the client invoke a
                 // callback function and display on the chat log
                 socket.on('my_response', function(msg){
+
+                    // if a connection is established for the first time,
+                    // there will be no user or message. In that case apped
+                    // as connected
                     if (!msg.data.user  || !msg.data.message) {
                         $("#chat-log").append("Connected" + "</br>");
                     }
@@ -41,21 +45,27 @@
                     var chatuser = $("#chat-user").val();
                     var chatmessage = $("#chat-message").val();
 
+                    // create a json object with the username and message
                     var dataobj = {
                         'user': chatuser,
                         'message': chatmessage
                     }
 
+                    // send the data obj to the server with custom message
                     socket.emit("my_broadcast_event", {data: dataobj});
 
+                    // reset the input box and set the focus for further input
                     $("#chat-message").val('');
                     $("#chat-message").focus();
+
+                    // return false to avoid refresh or redirect
                     return false;
                 });
 
             });
         </script>
     </head>
+
     <body>
         <nav id="header" class="navbar-inverse"><h2>Flask SocketIO and D3.js
             Realtime Chat App</h2></nav>
@@ -78,4 +88,5 @@
             </div> <!-- end of form -->
         </div> <!-- end of chat container -->
     </body>
+
 </html>
