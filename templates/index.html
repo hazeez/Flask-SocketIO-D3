@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script type="application/javascript" src="../static/js/jquery.min.js"></script>
+        <script type="application/javascript" src="../static/js/socket.io.js"></script>
+        <link rel="stylesheet" href="../static/js/bootstrap/css/bootstrap.min.css">
+        <script type="application/javascript" src="../static/js/bootstrap/js/bootstrap.min.js"></script>
+        <link rel="stylesheet" href="../static/css/main.css">
+        <script type="text/javascript" charset="utf-8">
+            $(document).ready(function(){
+
+                // namespaces help multiplex connections into a single socket
+                var namespace = "/test";
+
+                // connect to the socket io server
+                var socket = io.connect("http://" + document.domain + ":" +
+                        location.port + namespace);
+
+                // when connection is established log on a message
+                // connect is one of the inbuilt socket functions
+                socket.on('connect', function(){
+                    socket.emit('my_event', {data: "Connected"});
+                });
+
+                // when the server sends a response, make the client invoke a
+                // callback function and display on the chat log
+                socket.on('my_response', function(msg){
+                    $("#chat-log").append(msg.data + "</br>");
+                });
+
+                // when the form gets submitted, send a message to the server
+                // with the user name and the chat message and reset the chat
+                // message input box
+                $("form#chat-form").submit(function(event){
+                    socket.emit("my_broadcast_event", {data: $("#chat-user").val
+                    () + ": " + $("#chat-message").val()});
+
+                    $("#chat-message").val('');
+                    $("#chat-message").focus();
+                    return false;
+                });
+
+            });
+        </script>
+    </head>
+    <body>
+        <nav id="header" class="navbar-inverse"><h2>Flask SocketIO and D3.js
+            Realtime Chat App</h2></nav>
+        <div class="container col-sm-6" id="chat-container">
+            <div class="container col-sm-12" id="chat-log"></div>
+            <div class="container col-sm-12">
+                <form class="form-inline" id="chat-form">
+                    <div class="form-group col-sm-2">
+                        <input type="text" class="form-control" id="chat-user"
+                               placeholder="Your Name">
+                    </div>
+                    <div class="form-group col-sm-7 col-sm-offset-1">
+                        <input type="text" class="form-control col-sm-12"
+                               id="chat-message"
+                               placeholder="Your Message">
+                    </div>
+                    <button type="submit" class="btn btn-primary
+                    col-sm-2" id="btn-submit">Send</button>
+                </form>
+            </div> <!-- end of form -->
+        </div> <!-- end of chat container -->
+    </body>
+</html>

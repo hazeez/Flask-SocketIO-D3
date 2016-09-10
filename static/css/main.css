@@ -1,0 +1,23 @@
+#header{
+    margin-top: -20px;
+    padding: 10px 0px 5px 20px;
+    border-bottom: 1px solid #d5d5d5;
+    color: #d5d5d5;
+}
+#chat-log{
+    height: 500px;
+}
+#chat-form{
+    margin-top: 20px;
+}
+#chat-log{
+    position: relative;
+    overflow-x: hidden;
+    overflow-y: auto;
+    border: 1px solid #d5d5d5;
+    margin: 10px 0px 0px 15px;
+}
+#chat-message{
+    margin-left: 13px;
+    width: 100%;
+}
