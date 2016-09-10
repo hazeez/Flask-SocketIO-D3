@@ -25,15 +25,28 @@
                 // when the server sends a response, make the client invoke a
                 // callback function and display on the chat log
                 socket.on('my_response', function(msg){
-                    $("#chat-log").append(msg.data + "</br>");
+                    if (!msg.data.user  || !msg.data.message) {
+                        $("#chat-log").append("Connected" + "</br>");
+                    }
+                    else{
+                        $("#chat-log").append(msg.data.user + ": " + msg.data
+                                        .message + "</br>");
+                    }
                 });
 
                 // when the form gets submitted, send a message to the server
                 // with the user name and the chat message and reset the chat
                 // message input box
                 $("form#chat-form").submit(function(event){
-                    socket.emit("my_broadcast_event", {data: $("#chat-user").val
-                    () + ": " + $("#chat-message").val()});
+                    var chatuser = $("#chat-user").val();
+                    var chatmessage = $("#chat-message").val();
+
+                    var dataobj = {
+                        'user': chatuser,
+                        'message': chatmessage
+                    }
+
+                    socket.emit("my_broadcast_event", {data: dataobj});
 
                     $("#chat-message").val('');
                     $("#chat-message").focus();
