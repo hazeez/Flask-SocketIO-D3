@@ -27,14 +27,15 @@
                 socket.on('my_response', function(msg){
 
                     // if a connection is established for the first time,
-                    // there will be no user or message. In that case apped
+                    // there will be no user or message. In that case append
                     // as connected
                     if (!msg.data.user  || !msg.data.message) {
                         $("#chat-log").append("Connected" + "</br>");
                     }
                     else{
-                        $("#chat-log").append(msg.data.user + ": " + msg.data
-                                        .message + "</br>");
+                        $("#chat-log").append(msg.data.user + ":" +
+                                " " + msg.data.message + "</br>");
+                        console.log(msg.d3_data);
                     }
                 });
 
