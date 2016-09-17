@@ -22,22 +22,6 @@
                     socket.emit('my_event', {data: "Connected"});
                 });
 
-                // when the server sends a response, make the client invoke a
-                // callback function and display on the chat log
-                socket.on('my_response', function(msg){
-
-                    // if a connection is established for the first time,
-                    // there will be no user or message. In that case append
-                    // as connected
-                    if (!msg.data.user  || !msg.data.message) {
-                        $("#chat-log").append("Connected" + "</br>");
-                    }
-                    else{
-                        $("#chat-log").append(msg.data.user + ":" +
-                                " " + msg.data.message + "</br>");
-                        console.log(msg.d3_data);
-                    }
-                });
 
                 // when the form gets submitted, send a message to the server
                 // with the user name and the chat message and reset the chat
@@ -46,7 +30,18 @@
                     var chatuser = $("#chat-user").val();
                     var chatmessage = $("#chat-message").val();
 
-                    // create a json object with the username and message
+                    // client side validation to check for blank user name
+                    // and message values
+                    if ( chatuser.length < 1){
+                        $("#chat-user").focus();
+                        return false;
+                    }
+                    if (chatmessage.length < 1) {
+                        $("#chat-message").focus();
+                        return false;
+                    }
+
+                    // create a javascript object with the username and message
                     var dataobj = {
                         'user': chatuser,
                         'message': chatmessage
@@ -63,6 +58,46 @@
                     return false;
                 });
 
+
+                // when the server sends a response, make the client invoke a
+                // callback function and display on the chat log
+                socket.on('my_response', function(msg){
+
+                    // if a connection is established for the first time,
+                    // there will be no user or message. In that case append
+                    // as connected
+                    if (!msg.data.user  || !msg.data.message) {
+                        $("#chat-log").append("Connected" + "</br>");
+                    }
+                    else {
+                        // the below code will find the count of the message
+                        // of each user
+                        var current_user_name = '';
+                        var current_user_msg_count = 0;
+
+                        // loop thru the d3_data object
+                        for (var i = 0; i < msg.d3_data.length; i++){
+                            current_user_name = msg.data.user;
+                            // log the d3_data object to the console
+                            console.log(msg.d3_data[i].user);
+                            if (current_user_name == msg.d3_data[i].user.name){
+                                // get the current user's message count from
+                                // the javascript object d3_data
+                                current_user_msg_count = msg.d3_data[i].user
+                                        .msg_count;
+                                // break out of the loop if the user matches
+                                // not necessary to look thru the whole loop
+                                break;
+                            }
+                        }
+
+                        // logging the messages in the div
+                        $("#chat-log").append(" [ " + current_user_msg_count +
+                                " ] " + msg.data.user + ": " +
+                                 msg.data.message + "</br>");
+
+                    }
+                });
             });
         </script>
     </head>

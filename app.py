@@ -1,5 +1,6 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, jsonify
 from flask_socketio import SocketIO, emit
+import json
 
 app = Flask(__name__)
 socketio = SocketIO(app)
@@ -9,7 +10,11 @@ app.config['SECRET_KEY'] = '!secret'
 list_chat_users = []
 
 # message data dictionary
-message_data = {}
+message_data = {'user': {}}
+
+# message user list
+# empty list to store all the chat metrics
+msg_data_list = []
 
 
 # class to assign a user and the message
@@ -25,14 +30,13 @@ def index():
     return render_template('index.html')
 
 
-# get the custom message event from the client and execute the respective
-# function in the server
 @socketio.on('my_broadcast_event', namespace='/test')
 def broadcast_message(message):
     # check the message payload and if the users is not in list_chat_users
     # then add them to the list
     global list_chat_users
     global message_data
+    global msg_data_list
 
     # get the user from the message from the client
     chat_user = message['data']['user']
@@ -46,15 +50,37 @@ def broadcast_message(message):
         user = ChatData(chat_user, 1)
 
         # creating a dictionary in the form of
-        # e.g. {'Azeez',1}
-        message_data[user.name] = user.message_count
+        # e.g. {'user':{'name':'Azeez', 'msg_count':1}}
+
+        message_data['user']['name'] = user.name
+        message_data['user']['msg_count'] = user.message_count
+
+        # add it to the msg_data_list
+        msg_data_list.append(message_data)
+        # convert the list to json format
+        json.dumps(msg_data_list)
+        # reset the nested dictionary
+        message_data = {'user': {}}
+        print msg_data_list
+
     else:
         # if the user already has sent the message and is in the list chat users
         # update the message count for the user by 1
-        # e.g. this would make {'Azeez', 2} on the second message sent by Azeez
-        message_data[chat_user] += 1
+        # iterate thru the list of dictionaries
+        for dict_items in msg_data_list:
+            # iterate thru the dictionary
+            for key, value in dict_items['user'].iteritems():
+                # increment the msg count by 1 for the user who sends a message
+                if dict_items['user']['name'] == chat_user:
+                    dict_items['user']['msg_count'] += 1
+                    print json.dumps(msg_data_list)
+                # if the msg count is incremented by 1, break the loop
+                # as we don't have to loop thru the rest of the dictionary
+                break
 
-    emit('my_response', {'data': message['data'], 'd3_data': message_data},
+    # send the chat message back to the client and send the chat metrics data
+    emit('my_response', {'data': message['data'], 'd3_data':
+        msg_data_list},
          broadcast=True)
 
 
