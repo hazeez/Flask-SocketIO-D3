@@ -19,7 +19,7 @@
 
                 // setting the variable height and width of the svg for d3
                 var svg_height = 200;
-                var svg_width =  300;
+                var svg_width =  400;
                 // setting the variable for a circle graph
                 var svg_circle;
 
@@ -70,6 +70,8 @@
                 // callback function and display on the chat log
                 socket.on('my_response', function(msg){
 
+                    var total_messages = msg.total_messages;
+
                     // if a connection is established for the first time,
                     // there will be no user or message. In that case append
                     // as connected
@@ -89,6 +91,8 @@
                         // of each user
                         var current_user_name = '';
                         var current_user_msg_count = 0;
+
+                        console.log("total messages : ", total_messages);
 
                         // loop thru the d3_data object
                         for (var i = 0; i < msg.d3_data.length; i++){
@@ -112,26 +116,43 @@
                                  msg.data.message + "</br>");
 
                         var chart_data = msg.d3_data;
+                        // data set of colors for each circle
+                        var colors = ["blue","pink","green","orange","red"]
 
                         // rendering the circle graph
                         var circles =  svg_circle.selectAll("circle")
-                                .data(chart_data)
+                                .data(chart_data);
 
+                        // if the node is already bounded, then those circles
+                        // need to be transitioned to a new radius value
+
+                        circles.transition()
+                                .duration(500)
+                                .attr("r", function(d){
+                                    return d.user.msg_count * 5;
+                                })
+                                .attr("cx", function(d){
+                                    return svg_width - ( 75 * d.user.num );
+                                })
+                                .attr("cy", (svg_height / 2));
 
                         // only nodes that are not bounded in the DOM gets
                         // updated by enter function
                         circles.enter()
                                 .append("circle")
-                                .attr("cx",function(){
+                                .attr("cx",function(d){
                                     return svg_width / 2;
                                 })
-                                .attr("cy", function () {
-                                    return svg_height / 2;
+                                .attr("cy", function (d) {
+                                    return svg_height - 50;
                                 })
                                 .transition()
-                                .duration(2000)
+                                .duration(500)
                                 .attr("r", function(d){
-                                       return d.user.msg_count * 5;
+                                    return d.user.msg_count * 5;
+                                })
+                                .attr("fill", function(d){
+                                    return d.user.color;
                                 });
                     }
                 }); // end of my reponse
