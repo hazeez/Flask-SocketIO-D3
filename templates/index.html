@@ -71,6 +71,7 @@
                 socket.on('my_response', function(msg){
 
                     var total_messages = msg.total_messages;
+                    var padding = 30;
 
                     // if a connection is established for the first time,
                     // there will be no user or message. In that case append
@@ -94,6 +95,12 @@
 
                         console.log("total messages : ", total_messages);
 
+                        var no_of_users = d3.max(msg.d3_data, function(d){
+                            return d.user.num;
+                        });
+
+                        console.log("no_of_users_online :", no_of_users);
+
                         // loop thru the d3_data object
                         for (var i = 0; i < msg.d3_data.length; i++){
                             current_user_name = msg.data.user;
@@ -116,8 +123,6 @@
                                  msg.data.message + "</br>");
 
                         var chart_data = msg.d3_data;
-                        // data set of colors for each circle
-                        var colors = ["blue","pink","green","orange","red"]
 
                         // rendering the circle graph
                         var circles =  svg_circle.selectAll("circle")
@@ -132,7 +137,12 @@
                                     return d.user.msg_count * 5;
                                 })
                                 .attr("cx", function(d){
-                                    return svg_width - ( 75 * d.user.num );
+                                    console.log("within transition " +
+                                            ":" + no_of_users);
+                                    var xvalue = svg_width / (no_of_users + 1)
+                                    console.log("cx : ", xvalue);
+                                    return svg_width -  (xvalue * d.user.num)
+                                            - padding;
                                 })
                                 .attr("cy", (svg_height / 2));
 
