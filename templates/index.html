@@ -3,6 +3,7 @@
     <head>
         <script type="application/javascript" src="../static/js/jquery.min.js"></script>
         <script type="application/javascript" src="../static/js/socket.io.js"></script>
+        <script type="application/javascript" src="../static/js/d3.min.js"></script>
         <link rel="stylesheet" href="../static/js/bootstrap/css/bootstrap.min.css">
         <script type="application/javascript" src="../static/js/bootstrap/js/bootstrap.min.js"></script>
         <link rel="stylesheet" href="../static/css/main.css">
@@ -15,6 +16,12 @@
                 // connect to the socket io server
                 var socket = io.connect("http://" + document.domain + ":" +
                         location.port + namespace);
+
+                // setting the variable height and width of the svg for d3
+                var svg_height = 200;
+                var svg_width =  300;
+                // setting the variable for a circle graph
+                var svg_circle;
 
                 // when connection is established log on a message
                 // connect is one of the inbuilt socket functions
@@ -68,6 +75,14 @@
                     // as connected
                     if (!msg.data.user  || !msg.data.message) {
                         $("#chat-log").append("Connected" + "</br>");
+
+                        // append svg for the first time when the client is
+                        // connected
+                        svg_circle = d3.select("svg")
+                                    .attr("height",svg_height)
+                                    .attr("width", svg_width);
+
+
                     }
                     else {
                         // the below code will find the count of the message
@@ -96,9 +111,31 @@
                                 " ] " + msg.data.user + ": " +
                                  msg.data.message + "</br>");
 
+                        var chart_data = msg.d3_data;
+
+                        // rendering the circle graph
+                        var circles =  svg_circle.selectAll("circle")
+                                .data(chart_data)
+
+
+                        // only nodes that are not bounded in the DOM gets
+                        // updated by enter function
+                        circles.enter()
+                                .append("circle")
+                                .attr("cx",function(){
+                                    return svg_width / 2;
+                                })
+                                .attr("cy", function () {
+                                    return svg_height / 2;
+                                })
+                                .transition()
+                                .duration(2000)
+                                .attr("r", function(d){
+                                       return d.user.msg_count * 5;
+                                });
                     }
-                });
-            });
+                }); // end of my reponse
+            }); // end of document
         </script>
     </head>
 
@@ -123,6 +160,15 @@
                 </form>
             </div> <!-- end of form -->
         </div> <!-- end of chat container -->
+
+        <div class="container-fluid col-sm-5 col-md-offset-1" id="d3-graph">
+            <div class="col-sm-12" id="scattered-graph">
+                <svg width="300" height="200" id="svg-scattered"></svg>
+            </div>
+            <div class="col-sm-12" id="bar-graph">
+
+            </div>
+        </div>
     </body>
 
 </html>

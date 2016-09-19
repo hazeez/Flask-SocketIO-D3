@@ -1,13 +1,17 @@
+body{
+    background-color: #e8e8e8;
+}
 #header{
     margin-top: -20px;
     padding: 10px 0px 5px 20px;
     border-bottom: 1px solid #d5d5d5;
     color: #d5d5d5;
 }
-#chat-log{
+#chat-log, #d3-graph{
     height: 500px;
+    background-color: #FFF;
 }
-#chat-form{
+#chat-form, #d3-graph{
     margin-top: 20px;
 }
 #chat-log{
@@ -15,9 +19,16 @@
     overflow-x: hidden;
     overflow-y: auto;
     border: 1px solid #d5d5d5;
-    margin: 10px 0px 0px 15px;
+    margin: 20px 0px 0px 15px;
 }
 #chat-message{
     margin-left: 13px;
     width: 100%;
+}
+#scattered-graph, #bar-graph{
+    background-color: #fff;
+}
+#d3-graph{
+    margin-left: 30px;
+    margin-top: 20px;
 }

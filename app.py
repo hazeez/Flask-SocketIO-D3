@@ -30,6 +30,12 @@ def index():
     return render_template('index.html')
 
 
+# execute this when the client establishes a connection
+@socketio.on('connect', namespace='/test')
+def test_connect():
+    emit('my_response', {'data': 'Connected'})
+
+
 @socketio.on('my_broadcast_event', namespace='/test')
 def broadcast_message(message):
     # check the message payload and if the users is not in list_chat_users
@@ -57,8 +63,6 @@ def broadcast_message(message):
 
         # add it to the msg_data_list
         msg_data_list.append(message_data)
-        # convert the list to json format
-        json.dumps(msg_data_list)
         # reset the nested dictionary
         message_data = {'user': {}}
         print msg_data_list
@@ -73,21 +77,14 @@ def broadcast_message(message):
                 # increment the msg count by 1 for the user who sends a message
                 if dict_items['user']['name'] == chat_user:
                     dict_items['user']['msg_count'] += 1
-                    print json.dumps(msg_data_list)
+                    print msg_data_list
                 # if the msg count is incremented by 1, break the loop
                 # as we don't have to loop thru the rest of the dictionary
                 break
 
     # send the chat message back to the client and send the chat metrics data
-    emit('my_response', {'data': message['data'], 'd3_data':
-        msg_data_list},
+    emit('my_response', {'data': message['data'], 'd3_data': msg_data_list},
          broadcast=True)
-
-
-# execute this when the client establishes a connection
-@socketio.on('connect', namespace='/test')
-def test_connect():
-    emit('my_response', {'data': 'Connected'})
 
 
 if __name__ == '__main__':
