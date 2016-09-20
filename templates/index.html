@@ -22,6 +22,8 @@
                 var svg_width =  400;
                 // setting the variable for a circle graph
                 var svg_circle;
+                // setting the variable for a bar graph
+                var svg_bar;
 
                 // when connection is established log on a message
                 // connect is one of the inbuilt socket functions
@@ -79,12 +81,16 @@
                     if (!msg.data.user  || !msg.data.message) {
                         $("#chat-log").append("Connected" + "</br>");
 
-                        // append svg for the first time when the client is
-                        // connected
+                        // setting the svg height and width for scattered
+                        // plot or circle plt
                         svg_circle = d3.select("#svg-scattered")
                                     .attr("height",svg_height)
                                     .attr("width", svg_width);
 
+                        // setting the svg height and width for bar chart
+                        svg_bar = d3.select("#svg-bar")
+                                .attr("height", svg_height)
+                                .attr("width", svg_width);
 
                     }
                     else {
@@ -95,16 +101,6 @@
 
                         console.log("total messages : ", total_messages);
 
-                        // get the total number of users logged into the chat
-                        // room
-                        var no_of_users = d3.max(msg.d3_data, function(d){
-                            return d.user.num;
-                        });
-
-                        // get the total number of messages in the chat room
-                        var total_messages = d3.sum(msg.d3_data, function(d){
-                            return d.user.msg_count;
-                        });
 
                         console.log("no_of_users_online :", no_of_users);
 
@@ -142,6 +138,20 @@
                         var texts = svg_circle.selectAll("text").data
                         (chart_data)
 
+                        // variable for the bar graph
+                        var bars = svg_bar.selectAll(".bar").data(chart_data)
+
+                        // get the total number of users logged into the chat
+                        // room
+                        var no_of_users = d3.max(chart_data, function(d){
+                            return d.user.num;
+                        });
+
+                        // get the total number of messages in the chat room
+                        var total_messages = d3.sum(chart_data, function(d){
+                            return d.user.msg_count;
+                        });
+
                         // if the node is already bounded, then those circles
                         // need to be transitioned to a new radius value
 
@@ -159,7 +169,7 @@
                                     console.log("within transition - number " +
                                             "of users " +
                                             ":" + no_of_users);
-                                    var xvalue = svg_width / (no_of_users + 1)
+                                    var xvalue = svg_width / (no_of_users + 1);
                                     console.log("cx : ", xvalue);
                                     return svg_width -  (xvalue * d.user.num)
                                             - padding;
@@ -172,7 +182,7 @@
                         texts.transition()
                                 .duration(500)
                                 .attr("x", function(d){
-                                    var xvalue = svg_width / (no_of_users + 1)
+                                    var xvalue = svg_width / (no_of_users + 1);
                                     return svg_width -  (xvalue * d.user.num)
                                             - padding - 5; // -5 for
                                     // centering the text
@@ -211,6 +221,52 @@
                                 .attr("x", (svg_width / 3) - 5)
                                 .attr("y", 60)
                                 .attr("font-weight", "bold");
+
+
+                        // code for bar chart below
+
+                        // updating existing rect (bar) nodes when new nodes
+                        // enter the DOM
+                        bars.transition()
+                                .duration(500)
+                                .attr("x",function(d){
+                                    var xvalue = svg_width / (no_of_users + 1);
+                                    console.log("within bar transition - " +
+                                            "xvalue :" +
+                                            " " +
+                                            xvalue)
+                                    console.log ("x : " + svg_width -
+                                            (xvalue * d.user.num) - padding );
+                                    return svg_width -  (xvalue * d.user.num)
+                                            - padding;
+                                })
+                                .attr("y", svg_height / 2)
+                                .attr("height", function(d){
+                                    var msg_percent = Math.floor(( d.user
+                                                    .msg_count /
+                                            total_messages ) * 100);
+                                    return msg_percent;
+                                });
+
+                        // first time render of rect (bar) nodes
+                        bars.enter()
+                                .append("rect")
+                                .attr("class","bar")
+                                .attr("x", svg_width / 3)
+                                .attr("y", svg_height / 2)
+                                .attr("width", 30 )
+                                .transition()
+                                .duration(500)
+                                .attr("height", function(d){
+                                    var msg_percent = Math.floor(( d.user
+                                                    .msg_count /
+                                            total_messages ) * 100);
+                                    return msg_percent;
+                                })
+                                .attr("fill", function(d){
+                                    return d.user.color;
+                                });
+
                     }
                 }); // end of my reponse
             }); // end of document

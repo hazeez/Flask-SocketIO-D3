@@ -1,36 +1,43 @@
-body{
+body {
     background-color: #fcfcfc;
 }
-#header{
+
+#header {
     margin-top: -20px;
     padding: 10px 0px 5px 20px;
     border-bottom: 1px solid #d5d5d5;
     color: #d5d5d5;
 }
-#chat-log, #d3-graph{
+
+#chat-log, #d3-graph {
     height: 500px;
     background-color: #FFF;
-    border:1px solid #d5d5d5;
+    border: 1px solid #d5d5d5;
 }
-#chat-form, #d3-graph{
+
+#chat-form, #d3-graph {
     margin-top: 20px;
 }
-#chat-log{
+
+#chat-log {
     position: relative;
     overflow-x: hidden;
     overflow-y: auto;
     border: 1px solid #d5d5d5;
     margin: 20px 0px 0px 15px;
 }
-#chat-message{
+
+#chat-message {
     margin-left: 13px;
     width: 100%;
 }
-#scattered-graph, #bar-graph{
+
+#scattered-graph, #bar-graph {
     background-color: lightgoldenrodyellow;
     margin-top: 30px;
 }
-#d3-graph{
+
+#d3-graph {
     margin-left: 30px;
     margin-top: 20px;
 }

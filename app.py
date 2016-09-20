@@ -17,7 +17,7 @@ message_data = {'user': {}}
 msg_data_list = []
 
 # set the color for each user - for d3 to fill a circle for a user
-colors = ["blue","pink","red","orange","green"]
+colors = ["blue", "pink", "red", "orange", "green"]
 
 # set the user count to 0
 user_count = 0
@@ -25,10 +25,11 @@ user_count = 0
 # set the total message count to 0
 total_messages = 0
 
+
 # class to assign a user and the message
 class ChatData:
     # constructor
-    def __init__(self,number, name, message_count, user_color):
+    def __init__(self, number, name, message_count, user_color):
         self.number = number
         self.name = name
         self.message_count = message_count
