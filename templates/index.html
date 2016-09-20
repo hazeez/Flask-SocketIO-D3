@@ -138,6 +138,10 @@
                         var circles =  svg_circle.selectAll("circle")
                                 .data(chart_data);
 
+                        // adding label to the circle
+                        var texts = svg_circle.selectAll("text").data
+                        (chart_data)
+
                         // if the node is already bounded, then those circles
                         // need to be transitioned to a new radius value
 
@@ -162,6 +166,20 @@
                                 })
                                 .attr("cy", (svg_height / 2));
 
+                        // when a circle is drawn to the graph for the first
+                        // time i.e. enter, add a label
+                        // to it - the first letter of the user
+                        texts.transition()
+                                .duration(500)
+                                .attr("x", function(d){
+                                    var xvalue = svg_width / (no_of_users + 1)
+                                    return svg_width -  (xvalue * d.user.num)
+                                            - padding - 5; // -5 for
+                                    // centering the text
+                                })
+                                .attr("y", (svg_height / 2) )
+                                .attr("font-weight", "bold");
+
                         // only nodes that are not bounded in the DOM gets
                         // updated by enter function
                         circles.enter()
@@ -181,6 +199,18 @@
                                 .attr("fill", function(d){
                                     return d.user.color;
                                 });
+
+                        // when a circle is drawn to the graph for the first
+                        // time i.e. enter, add a label
+                        // to it - the first letter of the user
+                        texts.enter()
+                                .append("text")
+                                .text(function(d){
+                                    return d.user.name[0];
+                                })
+                                .attr("x", (svg_width / 3) - 5)
+                                .attr("y", 60)
+                                .attr("font-weight", "bold");
                     }
                 }); // end of my reponse
             }); // end of document
