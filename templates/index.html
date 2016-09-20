@@ -81,7 +81,7 @@
 
                         // append svg for the first time when the client is
                         // connected
-                        svg_circle = d3.select("svg")
+                        svg_circle = d3.select("#svg-scattered")
                                     .attr("height",svg_height)
                                     .attr("width", svg_width);
 
@@ -95,13 +95,23 @@
 
                         console.log("total messages : ", total_messages);
 
+                        // get the total number of users logged into the chat
+                        // room
                         var no_of_users = d3.max(msg.d3_data, function(d){
                             return d.user.num;
                         });
 
+                        // get the total number of messages in the chat room
+                        var total_messages = d3.sum(msg.d3_data, function(d){
+                            return d.user.msg_count;
+                        });
+
                         console.log("no_of_users_online :", no_of_users);
 
-                        // loop thru the d3_data object
+                        // the following code will add the message count to
+                        // the user chat log e.g [2] Azeez : Hi indicates two
+                        // messages sent by Azeez till now. This function get
+                        // the count
                         for (var i = 0; i < msg.d3_data.length; i++){
                             current_user_name = msg.data.user;
                             // log the d3_data object to the console
@@ -134,10 +144,16 @@
                         circles.transition()
                                 .duration(500)
                                 .attr("r", function(d){
-                                    return d.user.msg_count * 5;
+                                    // set the radius by computing the
+                                    // percentage of messages
+                                    var msg_percent = Math.floor(( d.user
+                                            .msg_count /
+                                            total_messages ) * 60);
+                                    return msg_percent;
                                 })
                                 .attr("cx", function(d){
-                                    console.log("within transition " +
+                                    console.log("within transition - number " +
+                                            "of users " +
                                             ":" + no_of_users);
                                     var xvalue = svg_width / (no_of_users + 1)
                                     console.log("cx : ", xvalue);
@@ -151,15 +167,16 @@
                         circles.enter()
                                 .append("circle")
                                 .attr("cx",function(d){
-                                    return svg_width / 2;
+                                    return svg_width / 3;
                                 })
-                                .attr("cy", function (d) {
-                                    return svg_height - 50;
-                                })
+                                .attr("cy", 70)
                                 .transition()
                                 .duration(500)
                                 .attr("r", function(d){
-                                    return d.user.msg_count * 5;
+                                    var msg_percent = Math.floor(( d.user
+                                                    .msg_count /
+                                            total_messages ) * 60);
+                                    return msg_percent;
                                 })
                                 .attr("fill", function(d){
                                     return d.user.color;
@@ -197,7 +214,7 @@
                 <svg width="300" height="200" id="svg-scattered"></svg>
             </div>
             <div class="col-sm-12" id="bar-graph">
-
+                <svg width="300" height="200" id="svg-bar"></svg>
             </div>
         </div>
     </body>

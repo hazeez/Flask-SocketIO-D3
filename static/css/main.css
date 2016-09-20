@@ -1,5 +1,5 @@
 body{
-    background-color: #e8e8e8;
+    background-color: #fcfcfc;
 }
 #header{
     margin-top: -20px;
@@ -10,6 +10,7 @@ body{
 #chat-log, #d3-graph{
     height: 500px;
     background-color: #FFF;
+    border:1px solid #d5d5d5;
 }
 #chat-form, #d3-graph{
     margin-top: 20px;
@@ -26,7 +27,8 @@ body{
     width: 100%;
 }
 #scattered-graph, #bar-graph{
-    background-color: #fff;
+    background-color: lightgoldenrodyellow;
+    margin-top: 30px;
 }
 #d3-graph{
     margin-left: 30px;
