@@ -231,30 +231,34 @@
                                 .duration(500)
                                 .attr("x",function(d){
                                     var xvalue = svg_width / (no_of_users + 1);
-                                    console.log("within bar transition - " +
-                                            "xvalue :" +
-                                            " " +
-                                            xvalue)
-                                    console.log ("x : " + svg_width -
-                                            (xvalue * d.user.num) - padding );
                                     return svg_width -  (xvalue * d.user.num)
                                             - padding;
                                 })
-                                .attr("y", svg_height / 2)
                                 .attr("height", function(d){
                                     var msg_percent = Math.floor(( d.user
                                                     .msg_count /
                                             total_messages ) * 100);
                                     return msg_percent;
+                                })
+                                .attr("y",function (d){
+                                    var msg_percent = Math.floor(( d.user
+                                                    .msg_count /
+                                            total_messages ) * 100);
+                                    return svg_height - padding - msg_percent
                                 });
 
                         // first time render of rect (bar) nodes
                         bars.enter()
                                 .append("rect")
                                 .attr("class","bar")
-                                .attr("x", svg_width / 3)
-                                .attr("y", svg_height / 2)
-                                .attr("width", 30 )
+                                .attr("x", svg_width / 2)
+                                .attr("y",function (d){
+                                    var msg_percent = Math.floor(( d.user
+                                                    .msg_count /
+                                            total_messages ) * 100);
+                                    return svg_height - padding - msg_percent
+                                })
+                                .attr("width", 30)
                                 .transition()
                                 .duration(500)
                                 .attr("height", function(d){
