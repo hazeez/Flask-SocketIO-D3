@@ -152,6 +152,16 @@
                             return d.user.msg_count;
                         });
 
+
+                        // function to compute the percentage of messages
+                        // from user
+                        function msg_percent(d){
+                            var msg_percent = Math.floor(( d.user
+                                            .msg_count /
+                                    total_messages ) * 100);
+                            return msg_percent;
+                        };
+
                         // if the node is already bounded, then those circles
                         // need to be transitioned to a new radius value
 
@@ -160,17 +170,10 @@
                                 .attr("r", function(d){
                                     // set the radius by computing the
                                     // percentage of messages
-                                    var msg_percent = Math.floor(( d.user
-                                            .msg_count /
-                                            total_messages ) * 60);
-                                    return msg_percent;
+                                    return msg_percent(d) * 0.7;
                                 })
                                 .attr("cx", function(d){
-                                    console.log("within transition - number " +
-                                            "of users " +
-                                            ":" + no_of_users);
                                     var xvalue = svg_width / (no_of_users + 1);
-                                    console.log("cx : ", xvalue);
                                     return svg_width -  (xvalue * d.user.num)
                                             - padding;
                                 })
@@ -201,10 +204,7 @@
                                 .transition()
                                 .duration(500)
                                 .attr("r", function(d){
-                                    var msg_percent = Math.floor(( d.user
-                                                    .msg_count /
-                                            total_messages ) * 60);
-                                    return msg_percent;
+                                    return msg_percent(d) * 0.7 ;
                                 })
                                 .attr("fill", function(d){
                                     return d.user.color;
@@ -222,7 +222,6 @@
                                 .attr("y", 60)
                                 .attr("font-weight", "bold");
 
-
                         // code for bar chart below
 
                         // updating existing rect (bar) nodes when new nodes
@@ -234,17 +233,12 @@
                                     return svg_width -  (xvalue * d.user.num)
                                             - padding;
                                 })
-                                .attr("height", function(d){
-                                    var msg_percent = Math.floor(( d.user
-                                                    .msg_count /
-                                            total_messages ) * 100);
-                                    return msg_percent;
+                                .attr("height", function (d) {
+                                    return msg_percent(d);
                                 })
-                                .attr("y",function (d){
-                                    var msg_percent = Math.floor(( d.user
-                                                    .msg_count /
-                                            total_messages ) * 100);
-                                    return svg_height - padding - msg_percent
+                                .attr("y", function(d){
+                                    return (svg_height - padding -
+                                    msg_percent(d));
                                 });
 
                         // first time render of rect (bar) nodes
@@ -252,20 +246,14 @@
                                 .append("rect")
                                 .attr("class","bar")
                                 .attr("x", svg_width / 2)
-                                .attr("y",function (d){
-                                    var msg_percent = Math.floor(( d.user
-                                                    .msg_count /
-                                            total_messages ) * 100);
-                                    return svg_height - padding - msg_percent
+                                .attr("y", function(d){
+                                    return (svg_height - padding - msg_percent(d));
                                 })
                                 .attr("width", 30)
                                 .transition()
                                 .duration(500)
                                 .attr("height", function(d){
-                                    var msg_percent = Math.floor(( d.user
-                                                    .msg_count /
-                                            total_messages ) * 100);
-                                    return msg_percent;
+                                    return msg_percent(d);
                                 })
                                 .attr("fill", function(d){
                                     return d.user.color;
