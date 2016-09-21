@@ -109,5 +109,10 @@ def broadcast_message(message):
                          'total_messages': total_messages}, broadcast=True)
 
 
+@socketio.on('my_circle_event', namespace="/test")
+def broadcast_click_event(message):
+    emit('my_circle_response', {'data' : message}, broadcast=True)
+
+
 if __name__ == '__main__':
     socketio.run(app, debug=True)

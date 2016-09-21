@@ -67,6 +67,11 @@
                     return false;
                 });
 
+                // get the circle response and print
+                socket.on('my_circle_response', function(msg){
+                    console.log(msg.data);
+                    $("#display-value").html(msg.data.data);
+                });
 
                 // when the server sends a response, make the client invoke a
                 // callback function and display on the chat log
@@ -210,6 +215,12 @@
                                     return d.user.color;
                                 });
 
+                        circles.on("click", function(d){
+                            var percent = d.user.name + " : " + msg_percent
+                                    (d).toString() + "%";
+                            // send the data obj to the server with custom message
+                            socket.emit("my_circle_event", {data: percent});
+                        });
                         // when a circle is drawn to the graph for the first
                         // time i.e. enter, add a label
                         // to it - the first letter of the user
@@ -289,6 +300,7 @@
 
         <div class="container-fluid col-sm-5 col-md-offset-1" id="d3-graph">
             <div class="col-sm-12" id="scattered-graph">
+                <div class="col-sm-12" id="display-value"></div>
                 <svg width="300" height="200" id="svg-scattered"></svg>
             </div>
             <div class="col-sm-12" id="bar-graph">
